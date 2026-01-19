@@ -17,12 +17,16 @@ vpc_response = ec2.create_vpc(
 vpc_id = vpc_response['Vpc']['VpcId']
 print(f"VPC creada con ID: {vpc_id}")
 
+print("--------------------------------")
+
 # Habilitar DNS en la VPC
 ec2.modify_vpc_attribute(
     VpcId=vpc_id,
     EnableDnsHostnames={'Value': True}
 )
 print("DNS hostnames habilitados en la VPC.")
+
+print("--------------------------------")
 
 subnet_publica= ec2.create_subnet(
     VpcId=vpc_id,
@@ -44,6 +48,8 @@ ec2.modify_subnet_attribute(
 )
 print(f"Subred pública creada con ID: {subnet_id_publica}")
 
+print("--------------------------------")
+
 subnet_privada= ec2.create_subnet(
     VpcId=vpc_id,
     CidrBlock='192.168.1.0/24',
@@ -58,6 +64,7 @@ subnet_privada= ec2.create_subnet(
 subnet_id_privada = subnet_privada['Subnet']['SubnetId']
 print(f"Subred privada creada con ID: {subnet_id_privada}")
 
+print("--------------------------------")
 
 # Creo internet Gateway y lo asocio a la vpc
 igw= ec2.create_internet_gateway()
@@ -69,12 +76,14 @@ ec2.create_tags(
 )
 print(f"Internet Gateway creado y asociado a la VPC: {igw_id}")
 
+print("--------------------------------")
 
 # Creo tabla de rutas
 route_table=ec2.create_route_table (VpcId=vpc_id)
 rtb_id = route_table['RouteTable']['RouteTableId']
 print(f"Tabla de rutas creada: {rtb_id}")
 
+print("--------------------------------")
 
 # Creo ruta hacia Internet
 ec2.create_route(
@@ -84,6 +93,8 @@ ec2.create_route(
 )
 print(f"Ruta a Internet creada en la tabla {rtb_id}")
 
+print("--------------------------------")
+
 # Asociar la tabla de rutas a la subred pública
 association = ec2.associate_route_table(
     SubnetId=subnet_id_publica,
@@ -91,6 +102,7 @@ association = ec2.associate_route_table(
 )
 print(f"Tabla de rutas {rtb_id} asociada a la subred {subnet_id_publica}")
 
+print("--------------------------------")
 
 # Crear Security Group
 gs=ec2.create_security_group(
@@ -100,6 +112,8 @@ gs=ec2.create_security_group(
 sg_id = gs['GroupId']
 print(f"Grupo de seguridad creado con ID: {sg_id}")
 
+
+print("--------------------------------")
 
 # Reglas del grupo de seguridad
 ec2.authorize_security_group_ingress(
@@ -150,6 +164,7 @@ ec2_publica = ec2.run_instances(
 ec2_publica_id = ec2_publica['Instances'][0]['InstanceId']
 print(f"Instancia EC2 pública creada con ID: {ec2_publica_id}")
 
+print("--------------------------------")
 
 # Crear instancia EC2 en la subred privada
 ec2_privada = ec2.run_instances(
@@ -171,11 +186,15 @@ ec2_privada = ec2.run_instances(
 ec2_privada_id = ec2_privada['Instances'][0]['InstanceId']
 print(f"Instancia EC2 privada creada con ID: {ec2_privada_id}")
 
+print("--------------------------------")
+
 # Crear Elastic IP para el NAT Gateway
 eip = ec2.allocate_address(Domain='vpc')
 eip_id = eip['AllocationId']
 
 print(f"Elastic IP creada con ID: {eip_id}")
+
+print("--------------------------------")
 
 # Crear NAT Gateway en la subred pública
 nat_gateway = ec2.create_nat_gateway(
@@ -191,6 +210,7 @@ nat_gateway = ec2.create_nat_gateway(
 nat_gateway_id = nat_gateway['NatGateway']['NatGatewayId']
 print(f"NAT Gateway creada con ID: {nat_gateway_id}")
 
+print("--------------------------------")
 
 # Esperar a que el NAT Gateway esté disponible
 waiter = ec2.get_waiter('nat_gateway_available')
@@ -210,6 +230,7 @@ rtb_privada = ec2.create_route_table(
 rtb_privada_id = rtb_privada['RouteTable']['RouteTableId']
 print(f"Tabla de rutas privada creada con ID: {rtb_privada_id}")
 
+print("--------------------------------")
 
 #Añado la ruta hacia el NAT Gateway
 ec2.create_route(
@@ -219,6 +240,7 @@ ec2.create_route(
 
 )
 print("Ruta hacia el NAT Gateway añadida a la tabla de rutas privada")
+print("--------------------------------")
 
 #Asocia la tabla de rutas a la subred privada
 ec2.associate_route_table(

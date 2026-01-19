@@ -1,7 +1,7 @@
 
 # Crear una VPC y devolver su ID
 VPC_ID=$(aws ec2 create-vpc \
-  --cidr-block 172.16.0.0/16 \
+  --cidr-block 10.10.0.0/16 \
   --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=MyVpc-GateWay}]' \
   --query 'Vpc.VpcId' \
   --output text)
