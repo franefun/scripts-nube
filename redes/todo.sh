@@ -5,10 +5,10 @@ REGION_1="us-east-1"      # Virginia
 REGION_2="us-west-2"      # Oregon
 
 echo "========================================="
-echo "🚀 INICIANDO CREACIÓN DE INFRAESTRUCTURA MULTI-REGIÓN"
+echo "INICIANDO CREACIÓN DE INFRAESTRUCTURA MULTI-REGIÓN"
 echo "========================================="
-echo "📍 Región 1: $REGION_1 (Virginia)"
-echo "📍 Región 2: $REGION_2 (Oregon)"
+echo "Región 1: $REGION_1 (Virginia)"
+echo "Región 2: $REGION_2 (Oregon)"
 echo ""
 
 # ========================================
@@ -18,46 +18,46 @@ echo "========================================="
 echo "🇺🇸 CONFIGURANDO REGIÓN 1: VIRGINIA"
 echo "========================================="
 
-# 1️⃣ CREAR VPC-A EN VIRGINIA
-echo "📦 Creando VPC-A en Virginia..."
+# CREAR VPC-A EN VIRGINIA
+echo "Creando VPC-A en Virginia..."
 VPC_A_ID=$(aws ec2 create-vpc \
   --cidr-block 10.10.0.0/16 \
   --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=VPC-A-Virginia}]' \
   --query 'Vpc.VpcId' \
   --output text --region $REGION_1)
 
-echo "✅ VPC-A creada: $VPC_A_ID"
+echo "VPC-A creada: $VPC_A_ID"
 
 aws ec2 modify-vpc-attribute \
   --vpc-id "$VPC_A_ID" \
   --enable-dns-hostnames "{\"Value\":true}" \
   --region $REGION_1
 
-# 2️⃣ CREAR VPC-B EN VIRGINIA
-echo "📦 Creando VPC-B en Virginia..."
+# CREAR VPC-B EN VIRGINIA
+echo "Creando VPC-B en Virginia..."
 VPC_B_ID=$(aws ec2 create-vpc \
   --cidr-block 10.20.0.0/16 \
   --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=VPC-B-Virginia}]' \
   --query 'Vpc.VpcId' \
   --output text --region $REGION_1)
 
-echo "✅ VPC-B creada: $VPC_B_ID"
+echo "VPC-B creada: $VPC_B_ID"
 
 aws ec2 modify-vpc-attribute \
   --vpc-id "$VPC_B_ID" \
   --enable-dns-hostnames "{\"Value\":true}" \
   --region $REGION_1
 
-# 3️⃣ INTERNET GATEWAY PARA VPC-A
-echo "🌐 Creando Internet Gateway para VPC-A..."
+# INTERNET GATEWAY PARA VPC-A
+echo "Creando Internet Gateway para VPC-A..."
 IGW_A_ID=$(aws ec2 create-internet-gateway \
   --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=IGW-A-Virginia}]' \
   --query 'InternetGateway.InternetGatewayId' --output text --region $REGION_1)
 
 aws ec2 attach-internet-gateway --vpc-id $VPC_A_ID --internet-gateway-id $IGW_A_ID --region $REGION_1
-echo "✅ IGW-A adjunto"
+echo "IGW-A adjunto"
 
-# 4️⃣ SUBREDES EN VPC-A (VIRGINIA)
+# SUBREDES EN VPC-A (VIRGINIA)
 echo "🔧 Creando subredes en VPC-A..."
 
 SUB_A_PUBLIC_1=$(aws ec2 create-subnet \
@@ -83,9 +83,9 @@ SUB_A_PRIVATE_2=$(aws ec2 create-subnet \
   --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=VPC-A-Private-2}]' \
   --query 'Subnet.SubnetId' --output text --region $REGION_1)
 
-echo "✅ Subredes VPC-A creadas"
+echo "Subredes VPC-A creadas"
 
-# 5️⃣ SUBREDES EN VPC-B (VIRGINIA)
+# SUBREDES EN VPC-B (VIRGINIA)
 echo "🔧 Creando subredes en VPC-B..."
 
 SUB_B_PRIVATE_1=$(aws ec2 create-subnet \
@@ -102,9 +102,9 @@ SUB_B_PRIVATE_2=$(aws ec2 create-subnet \
   --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=VPC-B-Private-2}]' \
   --query 'Subnet.SubnetId' --output text --region $REGION_1)
 
-echo "✅ Subredes VPC-B creadas"
+echo "Subredes VPC-B creadas"
 
-# 6️⃣ SECURITY GROUPS VIRGINIA
+# SECURITY GROUPS VIRGINIA
 echo "🔒 Creando Security Groups en Virginia..."
 
 SG_A_PUBLIC=$(aws ec2 create-security-group \
@@ -132,10 +132,10 @@ SG_B_PRIVATE=$(aws ec2 create-security-group \
 
 aws ec2 authorize-security-group-ingress --group-id $SG_B_PRIVATE --protocol all --cidr 10.0.0.0/8 --region $REGION_1
 
-echo "✅ Security Groups creados en Virginia"
+echo "Security Groups creados en Virginia"
 
-# 7️⃣ INSTANCIAS EC2 EN VIRGINIA
-echo "💻 Creando instancias EC2 en Virginia..."
+# INSTANCIAS EC2 EN VIRGINIA
+echo "Creando instancias EC2 en Virginia..."
 
 EC2_A_PUBLIC=$(aws ec2 run-instances \
     --image-id ami-0360c520857e3138f \
@@ -148,7 +148,7 @@ EC2_A_PUBLIC=$(aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2-Virginia-Public}]' \
     --query 'Instances[0].InstanceId' --output text)
 
-echo "✅ EC2 pública Virginia: $EC2_A_PUBLIC"
+echo "EC2 pública Virginia: $EC2_A_PUBLIC"
 
 EC2_A_PRIVATE=$(aws ec2 run-instances \
     --image-id ami-0360c520857e3138f \
@@ -160,7 +160,7 @@ EC2_A_PRIVATE=$(aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2-Virginia-VPC-A-Private}]' \
     --query 'Instances[0].InstanceId' --output text)
 
-echo "✅ EC2 privada VPC-A Virginia: $EC2_A_PRIVATE"
+echo "EC2 privada VPC-A Virginia: $EC2_A_PRIVATE"
 
 EC2_B_PRIVATE=$(aws ec2 run-instances \
     --image-id ami-0360c520857e3138f \
@@ -172,10 +172,10 @@ EC2_B_PRIVATE=$(aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2-Virginia-VPC-B-Private}]' \
     --query 'Instances[0].InstanceId' --output text)
 
-echo "✅ EC2 privada VPC-B Virginia: $EC2_B_PRIVATE"
+echo "EC2 privada VPC-B Virginia: $EC2_B_PRIVATE"
 
-# 8️⃣ NAT GATEWAY VIRGINIA
-echo "🌐 Creando NAT Gateway en Virginia..."
+# NAT GATEWAY VIRGINIA
+echo "Creando NAT Gateway en Virginia..."
 EIP_VIRGINIA=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text --region $REGION_1)
 NAT_VIRGINIA=$(aws ec2 create-nat-gateway \
   --subnet-id $SUB_A_PUBLIC_1 \
@@ -183,25 +183,25 @@ NAT_VIRGINIA=$(aws ec2 create-nat-gateway \
   --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=NAT-Virginia}]' \
   --query 'NatGateway.NatGatewayId' --output text --region $REGION_1)
 
-echo "⏳ Esperando NAT Gateway Virginia..."
+echo "Esperando NAT Gateway Virginia..."
 aws ec2 wait nat-gateway-available --nat-gateway-ids $NAT_VIRGINIA --region $REGION_1
-echo "✅ NAT Gateway Virginia disponible"
+echo "NAT Gateway Virginia disponible"
 
 # ========================================
-# 🌐 TRANSIT GATEWAY VIRGINIA
+# TRANSIT GATEWAY VIRGINIA
 # ========================================
 echo ""
-echo "🌐 Creando Transit Gateway en Virginia..."
+echo "Creando Transit Gateway en Virginia..."
 TGW_VIRGINIA=$(aws ec2 create-transit-gateway \
   --description "TGW Virginia" \
   --tag-specifications 'ResourceType=transit-gateway,Tags=[{Key=Name,Value=TGW-Virginia}]' \
   --query 'TransitGateway.TransitGatewayId' \
   --output text --region $REGION_1)
 
-echo "✅ TGW Virginia: $TGW_VIRGINIA"
-echo "⏳ Esperando TGW Virginia..."
+echo "TGW Virginia: $TGW_VIRGINIA"
+echo "Esperando TGW Virginia..."
 sleep 180
-echo "✅ TGW Virginia disponible"
+echo "TGW Virginia disponible"
 
 # Adjuntar VPC-A al TGW
 TGW_ATTACH_VA=$(aws ec2 create-transit-gateway-vpc-attachment \
@@ -212,7 +212,7 @@ TGW_ATTACH_VA=$(aws ec2 create-transit-gateway-vpc-attachment \
   --query 'TransitGatewayVpcAttachment.TransitGatewayAttachmentId' \
   --output text --region $REGION_1)
 
-echo "✅ VPC-A adjunta a TGW Virginia"
+echo "VPC-A adjunta a TGW Virginia"
 
 # Adjuntar VPC-B al TGW
 TGW_ATTACH_VB=$(aws ec2 create-transit-gateway-vpc-attachment \
@@ -223,57 +223,57 @@ TGW_ATTACH_VB=$(aws ec2 create-transit-gateway-vpc-attachment \
   --query 'TransitGatewayVpcAttachment.TransitGatewayAttachmentId' \
   --output text --region $REGION_1)
 
-echo "✅ VPC-B adjunta a TGW Virginia"
+echo "VPC-B adjunta a TGW Virginia"
 
 # ========================================
 # REGIÓN 2: US-WEST-2 (OREGON)
 # ========================================
 echo ""
 echo "========================================="
-echo "🌲 CONFIGURANDO REGIÓN 2: OREGON"
+echo "CONFIGURANDO REGIÓN 2: OREGON"
 echo "========================================="
 
-# 1️⃣ CREAR VPC-C EN OREGON
-echo "📦 Creando VPC-C en Oregon..."
+# CREAR VPC-C EN OREGON
+echo "Creando VPC-C en Oregon..."
 VPC_C_ID=$(aws ec2 create-vpc \
   --cidr-block 10.30.0.0/16 \
   --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=VPC-C-Oregon}]' \
   --query 'Vpc.VpcId' \
   --output text --region $REGION_2)
 
-echo "✅ VPC-C creada: $VPC_C_ID"
+echo "VPC-C creada: $VPC_C_ID"
 
 aws ec2 modify-vpc-attribute \
   --vpc-id "$VPC_C_ID" \
   --enable-dns-hostnames "{\"Value\":true}" \
   --region $REGION_2
 
-# 2️⃣ CREAR VPC-D EN OREGON
-echo "📦 Creando VPC-D en Oregon..."
+# CREAR VPC-D EN OREGON
+echo "Creando VPC-D en Oregon..."
 VPC_D_ID=$(aws ec2 create-vpc \
   --cidr-block 10.40.0.0/16 \
   --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=VPC-D-Oregon}]' \
   --query 'Vpc.VpcId' \
   --output text --region $REGION_2)
 
-echo "✅ VPC-D creada: $VPC_D_ID"
+echo "VPC-D creada: $VPC_D_ID"
 
 aws ec2 modify-vpc-attribute \
   --vpc-id "$VPC_D_ID" \
   --enable-dns-hostnames "{\"Value\":true}" \
   --region $REGION_2
 
-# 3️⃣ INTERNET GATEWAY PARA VPC-C
-echo "🌐 Creando Internet Gateway para VPC-C..."
+# INTERNET GATEWAY PARA VPC-C
+echo "Creando Internet Gateway para VPC-C..."
 IGW_C_ID=$(aws ec2 create-internet-gateway \
   --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=IGW-C-Oregon}]' \
   --query 'InternetGateway.InternetGatewayId' --output text --region $REGION_2)
 
 aws ec2 attach-internet-gateway --vpc-id $VPC_C_ID --internet-gateway-id $IGW_C_ID --region $REGION_2
-echo "✅ IGW-C adjunto"
+echo "IGW-C adjunto"
 
-# 4️⃣ SUBREDES EN VPC-C (OREGON)
-echo "🔧 Creando subredes en VPC-C..."
+# SUBREDES EN VPC-C (OREGON)
+echo "Creando subredes en VPC-C..."
 
 SUB_C_PUBLIC_1=$(aws ec2 create-subnet \
   --vpc-id $VPC_C_ID \
@@ -298,10 +298,10 @@ SUB_C_PRIVATE_2=$(aws ec2 create-subnet \
   --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=VPC-C-Private-2}]' \
   --query 'Subnet.SubnetId' --output text --region $REGION_2)
 
-echo "✅ Subredes VPC-C creadas"
+echo "Subredes VPC-C creadas"
 
-# 5️⃣ SUBREDES EN VPC-D (OREGON)
-echo "🔧 Creando subredes en VPC-D..."
+# SUBREDES EN VPC-D (OREGON)
+echo "Creando subredes en VPC-D..."
 
 SUB_D_PRIVATE_1=$(aws ec2 create-subnet \
   --vpc-id $VPC_D_ID \
@@ -317,10 +317,10 @@ SUB_D_PRIVATE_2=$(aws ec2 create-subnet \
   --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=VPC-D-Private-2}]' \
   --query 'Subnet.SubnetId' --output text --region $REGION_2)
 
-echo "✅ Subredes VPC-D creadas"
+echo "Subredes VPC-D creadas"
 
-# 6️⃣ SECURITY GROUPS OREGON
-echo "🔒 Creando Security Groups en Oregon..."
+# SECURITY GROUPS OREGON
+echo "Creando Security Groups en Oregon..."
 
 SG_C_PUBLIC=$(aws ec2 create-security-group \
   --vpc-id $VPC_C_ID \
@@ -347,11 +347,11 @@ SG_D_PRIVATE=$(aws ec2 create-security-group \
 
 aws ec2 authorize-security-group-ingress --group-id $SG_D_PRIVATE --protocol all --cidr 10.0.0.0/8 --region $REGION_2
 
-echo "✅ Security Groups creados en Oregon"
+echo "Security Groups creados en Oregon"
 
 
-# 7️⃣ INSTANCIAS EC2 EN OREGON
-echo "💻 Creando instancias EC2 en Oregon..."
+# INSTANCIAS EC2 EN OREGON
+echo "Creando instancias EC2 en Oregon..."
 
 EC2_C_PUBLIC=$(aws ec2 run-instances \
     --image-id ami-00f46ccd1cbfb363e \
@@ -364,7 +364,7 @@ EC2_C_PUBLIC=$(aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2-Oregon-Public}]' \
     --query 'Instances[0].InstanceId' --output text)
 
-echo "✅ EC2 pública Oregon: $EC2_C_PUBLIC"
+echo "EC2 pública Oregon: $EC2_C_PUBLIC"
 
 EC2_C_PRIVATE=$(aws ec2 run-instances \
     --image-id ami-00f46ccd1cbfb363e \
@@ -376,7 +376,7 @@ EC2_C_PRIVATE=$(aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2-Oregon-VPC-C-Private}]' \
     --query 'Instances[0].InstanceId' --output text)
 
-echo "✅ EC2 privada VPC-C Oregon: $EC2_C_PRIVATE"
+echo "EC2 privada VPC-C Oregon: $EC2_C_PRIVATE"
 
 EC2_D_PRIVATE=$(aws ec2 run-instances \
     --image-id ami-00f46ccd1cbfb363e \
@@ -388,10 +388,10 @@ EC2_D_PRIVATE=$(aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2-Oregon-VPC-D-Private}]' \
     --query 'Instances[0].InstanceId' --output text)
 
-echo "✅ EC2 privada VPC-D Oregon: $EC2_D_PRIVATE"
+echo "EC2 privada VPC-D Oregon: $EC2_D_PRIVATE"
 
-# 8️⃣ NAT GATEWAY OREGON
-echo "🌐 Creando NAT Gateway en Oregon..."
+# NAT GATEWAY OREGON
+echo "Creando NAT Gateway en Oregon..."
 EIP_OREGON=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text --region $REGION_2)
 NAT_OREGON=$(aws ec2 create-nat-gateway \
   --subnet-id $SUB_C_PUBLIC_1 \
@@ -399,25 +399,25 @@ NAT_OREGON=$(aws ec2 create-nat-gateway \
   --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=NAT-Oregon}]' \
   --query 'NatGateway.NatGatewayId' --output text --region $REGION_2)
 
-echo "⏳ Esperando NAT Gateway Oregon..."
+echo "Esperando NAT Gateway Oregon..."
 aws ec2 wait nat-gateway-available --nat-gateway-ids $NAT_OREGON --region $REGION_2
-echo "✅ NAT Gateway Oregon disponible"
+echo "NAT Gateway Oregon disponible"
 
 # ========================================
-# 🌐 TRANSIT GATEWAY OREGON
+# TRANSIT GATEWAY OREGON
 # ========================================
 echo ""
-echo "🌐 Creando Transit Gateway en Oregon..."
+echo "Creando Transit Gateway en Oregon..."
 TGW_OREGON=$(aws ec2 create-transit-gateway \
   --description "TGW Oregon" \
   --tag-specifications 'ResourceType=transit-gateway,Tags=[{Key=Name,Value=TGW-Oregon}]' \
   --query 'TransitGateway.TransitGatewayId' \
   --output text --region $REGION_2)
 
-echo "✅ TGW Oregon: $TGW_OREGON"
-echo "⏳ Esperando TGW Oregon..."
+echo "TGW Oregon: $TGW_OREGON"
+echo "Esperando TGW Oregon..."
 sleep 180
-echo "✅ TGW Oregon disponible"
+echo "TGW Oregon disponible"
 
 # Adjuntar VPC-C al TGW
 TGW_ATTACH_VC=$(aws ec2 create-transit-gateway-vpc-attachment \
@@ -428,7 +428,7 @@ TGW_ATTACH_VC=$(aws ec2 create-transit-gateway-vpc-attachment \
   --query 'TransitGatewayVpcAttachment.TransitGatewayAttachmentId' \
   --output text --region $REGION_2)
 
-echo "✅ VPC-C adjunta a TGW Oregon"
+echo "VPC-C adjunta a TGW Oregon"
 
 # Adjuntar VPC-D al TGW
 TGW_ATTACH_VD=$(aws ec2 create-transit-gateway-vpc-attachment \
@@ -439,14 +439,14 @@ TGW_ATTACH_VD=$(aws ec2 create-transit-gateway-vpc-attachment \
   --query 'TransitGatewayVpcAttachment.TransitGatewayAttachmentId' \
   --output text --region $REGION_2)
 
-echo "✅ VPC-D adjunta a TGW Oregon"
+echo "VPC-D adjunta a TGW Oregon"
 
 # ========================================
-# 🔗 TRANSIT GATEWAY PEERING
+# TRANSIT GATEWAY PEERING
 # ========================================
 echo ""
 echo "========================================="
-echo "🔗 CONFIGURANDO TRANSIT GATEWAY PEERING"
+echo "CONFIGURANDO TRANSIT GATEWAY PEERING"
 echo "========================================="
 
 # Crear Peering Request desde Virginia a Oregon
@@ -459,8 +459,8 @@ TGW_PEERING_ID=$(aws ec2 create-transit-gateway-peering-attachment \
   --query 'TransitGatewayPeeringAttachment.TransitGatewayAttachmentId' \
   --output text --region $REGION_1)
 
-echo "✅ TGW Peering Request creado: $TGW_PEERING_ID"
-echo "⏳ Esperando a que el peering esté pendiente de aceptación..."
+echo "TGW Peering Request creado: $TGW_PEERING_ID"
+echo "Esperando a que el peering esté pendiente de aceptación..."
 sleep 90
 
 # Aceptar el Peering desde Oregon
@@ -468,17 +468,17 @@ aws ec2 accept-transit-gateway-peering-attachment \
   --transit-gateway-attachment-id $TGW_PEERING_ID \
   --region $REGION_2 > /dev/null
 
-echo "✅ TGW Peering aceptado"
-echo "⏳ Esperando a que el peering esté disponible..."
+echo "TGW Peering aceptado"
+echo "Esperando a que el peering esté disponible..."
 sleep 300
 
-echo "✅ TGW Peering disponible y activo"
+echo "TGW Peering disponible y activo"
 
 # ========================================
-# 🛣️ CONFIGURAR RUTAS - VIRGINIA
+# CONFIGURAR RUTAS - VIRGINIA
 # ========================================
 echo ""
-echo "🛣️  Configurando rutas en Virginia..."
+echo "Configurando rutas en Virginia..."
 
 # Tabla pública VPC-A
 RTB_A_PUBLIC=$(aws ec2 create-route-table \
@@ -516,13 +516,13 @@ aws ec2 create-route --route-table-id $RTB_B_PRIVATE --destination-cidr-block 10
 aws ec2 associate-route-table --subnet-id $SUB_B_PRIVATE_1 --route-table-id $RTB_B_PRIVATE --region $REGION_1
 aws ec2 associate-route-table --subnet-id $SUB_B_PRIVATE_2 --route-table-id $RTB_B_PRIVATE --region $REGION_1
 
-echo "✅ Rutas Virginia configuradas"
+echo "Rutas Virginia configuradas"
 
 # ========================================
-# 🛣️ CONFIGURAR RUTAS - OREGON
+# CONFIGURAR RUTAS - OREGON
 # ========================================
 echo ""
-echo "🛣️  Configurando rutas en Oregon..."
+echo "Configurando rutas en Oregon..."
 
 # Tabla pública VPC-C
 RTB_C_PUBLIC=$(aws ec2 create-route-table \
@@ -560,13 +560,13 @@ aws ec2 create-route --route-table-id $RTB_D_PRIVATE --destination-cidr-block 10
 aws ec2 associate-route-table --subnet-id $SUB_D_PRIVATE_1 --route-table-id $RTB_D_PRIVATE --region $REGION_2
 aws ec2 associate-route-table --subnet-id $SUB_D_PRIVATE_2 --route-table-id $RTB_D_PRIVATE --region $REGION_2
 
-echo "✅ Rutas Oregon configuradas"
+echo "Rutas Oregon configuradas"
 
 # ========================================
-# 🔥 CONFIGURAR RUTAS EN TRANSIT GATEWAYS
+# CONFIGURAR RUTAS EN TRANSIT GATEWAYS
 # ========================================
 echo ""
-echo "🔥 Configurando rutas estáticas en Transit Gateways..."
+echo "Configurando rutas estáticas en Transit Gateways..."
 
 # Obtener tabla de rutas del TGW Virginia
 TGW_RTB_VIRGINIA=$(aws ec2 describe-transit-gateway-route-tables \
@@ -587,7 +587,7 @@ aws ec2 create-transit-gateway-route \
   --transit-gateway-attachment-id $TGW_PEERING_ID \
   --region $REGION_1
 
-echo "✅ Rutas estáticas TGW Virginia -> Oregon configuradas"
+echo "Rutas estáticas TGW Virginia -> Oregon configuradas"
 
 # Obtener tabla de rutas del TGW Oregon
 TGW_RTB_OREGON=$(aws ec2 describe-transit-gateway-route-tables \
@@ -608,17 +608,17 @@ aws ec2 create-transit-gateway-route \
   --transit-gateway-attachment-id $TGW_PEERING_ID \
   --region $REGION_2
 
-echo "✅ Rutas estáticas TGW Oregon -> Virginia configuradas"
+echo "Rutas estáticas TGW Oregon -> Virginia configuradas"
 
 # ========================================
-# 📊 OBTENER IPs PRIVADAS
+# OBTENER IPs PRIVADAS
 # ========================================
 echo ""
-echo "⏳ Esperando a que las instancias estén en ejecución..."
+echo "Esperando a que las instancias estén en ejecución..."
 sleep 30
 
 echo ""
-echo "📊 Obteniendo IPs privadas de las instancias..."
+echo "Obteniendo IPs privadas de las instancias..."
 
 IP_VIRGINIA_A=$(aws ec2 describe-instances \
   --instance-ids $EC2_A_PRIVATE \
@@ -651,17 +651,17 @@ IP_PUBLIC_OREGON=$(aws ec2 describe-instances \
   --output text --region $REGION_2)
 
 # ========================================
-# 📊 RESUMEN FINAL
+# RESUMEN FINAL
 # ========================================
 echo ""
 echo "========================================="
-echo "✅ INFRAESTRUCTURA MULTI-REGIÓN COMPLETADA"
+echo "INFRAESTRUCTURA MULTI-REGIÓN COMPLETADA"
 echo "========================================="
 echo ""
-echo "🌍 ARQUITECTURA GLOBAL:"
+echo "ARQUITECTURA GLOBAL:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "📍 VIRGINIA (us-east-1):"
+echo " VIRGINIA (us-east-1):"
 echo "  ├─ VPC-A: $VPC_A_ID (10.10.0.0/16)"
 echo "  │  ├─ EC2 Pública: $EC2_A_PUBLIC ($IP_PUBLIC_VIRGINIA)"
 echo "  │  └─ EC2 Privada: $EC2_A_PRIVATE ($IP_VIRGINIA_A)"
@@ -669,7 +669,7 @@ echo "  ├─ VPC-B: $VPC_B_ID (10.20.0.0/16)"
 echo "  │  └─ EC2 Privada: $EC2_B_PRIVATE ($IP_VIRGINIA_B)"
 echo "  └─ TGW Virginia: $TGW_VIRGINIA"
 echo ""
-echo "📍 OREGON (us-west-2):"
+echo " OREGON (us-west-2):"
 echo "  ├─ VPC-C: $VPC_C_ID (10.30.0.0/16)"
 echo "  │  ├─ EC2 Pública: $EC2_C_PUBLIC ($IP_PUBLIC_OREGON)"
 echo "  │  └─ EC2 Privada: $EC2_C_PRIVATE ($IP_OREGON_C)"
@@ -677,35 +677,35 @@ echo "  ├─ VPC-D: $VPC_D_ID (10.40.0.0/16)"
 echo "  │  └─ EC2 Privada: $EC2_D_PRIVATE ($IP_OREGON_D)"
 echo "  └─ TGW Oregon: $TGW_OREGON"
 echo ""
-echo "🔗 CONECTIVIDAD:"
+echo " CONECTIVIDAD:"
 echo "  ├─ VPC-A ↔ VPC-B: Transit Gateway Virginia"
 echo "  ├─ VPC-C ↔ VPC-D: Transit Gateway Oregon"
 echo "  └─ Virginia ↔ Oregon: TGW Peering ($TGW_PEERING_ID)"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "🧪 PRUEBAS DE CONECTIVIDAD:"
+echo " PRUEBAS DE CONECTIVIDAD:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "1️⃣ CONECTAR A VIRGINIA:"
+echo " CONECTAR A VIRGINIA:"
 echo "   ssh -i vockey.pem ec2-user@$IP_PUBLIC_VIRGINIA"
 echo ""
-echo "2️⃣ PROBAR CONECTIVIDAD LOCAL (Virginia):"
+echo " PROBAR CONECTIVIDAD LOCAL (Virginia):"
 echo "   ssh ec2-user@$IP_VIRGINIA_B"
 echo "   ping $IP_VIRGINIA_B"
 echo ""
-echo "3️⃣ PROBAR CONECTIVIDAD INTER-REGIÓN (Virginia → Oregon):"
+echo " PROBAR CONECTIVIDAD INTER-REGIÓN (Virginia → Oregon):"
 echo "   ping $IP_OREGON_C"
 echo "   ping $IP_OREGON_D"
 echo ""
-echo "4️⃣ CONECTAR A OREGON:"
+echo " CONECTAR A OREGON:"
 echo "   ssh -i vockey.pem ec2-user@$IP_PUBLIC_OREGON"
 echo ""
-echo "5️⃣ PROBAR CONECTIVIDAD INVERSA (Oregon → Virginia):"
+echo " PROBAR CONECTIVIDAD INVERSA (Oregon → Virginia):"
 echo "   ping $IP_VIRGINIA_A"
 echo "   ping $IP_VIRGINIA_B"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "✨ ¡Listo! Arquitectura multi-región completamente funcional"
+echo "¡Listo! Arquitectura multi-región completamente funcional"
 echo ""
