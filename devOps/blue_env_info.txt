@@ -1,0 +1,11 @@
+BLUE ENVIRONMENT INFORMATION
+============================
+Timestamp: mar 18 nov 2025 17:15:48 CET
+
+Environment Name: franF-app-blue
+URL: http://franefun-app-blue.us-east-1.elasticbeanstalk.com
+Version: 1.0.0
+Status: Ready
+Health: Green
+Region: us-east-1
+Application: franF-app

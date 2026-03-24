@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Página de Bienvenida</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #44cc05;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: white;
+      font-size: 4rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: white;
+      color: #1e90ff;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #0077cc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hola Mundo</h1>
+  <button id="go-login">Ir al Login</button>
+
+  <script>
+    const titulo = document.querySelector('h1');
+
+    // Rotación al pasar el ratón
+    titulo.addEventListener('mouseenter', () => {
+      titulo.style.transform = 'rotate(360deg)';
+    });
+    titulo.addEventListener('mouseleave', () => {
+      titulo.style.transform = 'rotate(0deg)';
+    });
+
+    // Botón para ir al login
+    document.getElementById('go-login').addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

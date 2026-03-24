@@ -1,0 +1,18 @@
+GREEN ENVIRONMENT INFORMATION
+=============================
+Timestamp: mar 18 nov 2025 17:52:04 CET
+
+BLUE Environment:
+  Name: mck11-app-blue
+  URL: http://None
+  Version: None
+  Health: None
+
+GREEN Environment:
+  Name: franF-app-green
+  URL: http://franefun-app-green.us-east-1.elasticbeanstalk.com
+  Version: 1.0.1
+  Health: Green
+
+Region: us-east-1
+Application: franF-app

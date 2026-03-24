@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Página de bienvenida</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #1e90ff; /* azul */
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: white;
+      font-size: 4rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hola Mundo</h1>
+
+  <script>
+    const titulo = document.querySelector('h1');
+
+    titulo.addEventListener('mouseenter', () => {
+      titulo.style.transform = 'rotate(360deg)';
+    });
+
+    titulo.addEventListener('mouseleave', () => {
+      titulo.style.transform = 'rotate(0deg)';
+    });
+
+    titulo.addEventListener('click', () => {
+      alert('Aquí luego redirigiremos al formulario de login');
+      // Futuro: window.location.href = "/login";
+    });
+  </script>
+</body>
+</html>

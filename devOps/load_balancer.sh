@@ -69,7 +69,6 @@ echo "Instancias detectadas: $INSTANCES"
     --targets $(for id in $INSTANCES; do echo "Id=$id"; done)
   echo "Instancias registradas en el Target Group."
 
-
 #Crear Listener TCP
 aws elbv2 create-listener \
   --load-balancer-arn $LB_ARN \
