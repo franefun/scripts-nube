@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAM Items Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --accent: #00ff99;
+      --accent2: #ff3d6e;
+      --text: #e8e8e8;
+      --muted: #666;
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,153,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,153,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .api-badge {
+      font-size: 0.7rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: blink 1.4s infinite;
+    }
+
+    .dot.ok { background: var(--accent); }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    /* Config section */
+    .config-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 2px;
+    }
+
+    .config-box label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+
+    .config-box input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .config-box input:focus { border-color: var(--accent2); }
+
+    /* Panels grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .method-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      letter-spacing: 1px;
+    }
+
+    .get { background: rgba(0,255,153,0.12); color: var(--accent); border: 1px solid rgba(0,255,153,0.3); }
+    .post { background: rgba(255,61,110,0.12); color: var(--accent2); border: 1px solid rgba(255,61,110,0.3); }
+
+    .panel-body { padding: 1.2rem; }
+
+    .field {
+      margin-bottom: 0.9rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.35rem;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus { border-color: var(--accent); }
+
+    .btn {
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 2px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-accent:hover { background: #00cc77; transform: translateY(-1px); }
+
+    .btn-danger {
+      background: var(--accent2);
+      color: #fff;
+    }
+
+    .btn-danger:hover { background: #e0354f; transform: translateY(-1px); }
+
+    .btn:active { transform: translateY(0); }
+
+    /* Full width panel */
+    .panel-full {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Response area */
+    .response-area {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .response-header {
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .response-title {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .status-ok { background: rgba(0,255,153,0.15); color: var(--accent); }
+    .status-err { background: rgba(255,61,110,0.15); color: var(--accent2); }
+    .status-idle { background: rgba(102,102,102,0.15); color: var(--muted); }
+
+    pre {
+      padding: 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 100px;
+      max-height: 320px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    pre::-webkit-scrollbar { width: 4px; }
+    pre::-webkit-scrollbar-track { background: transparent; }
+    pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .loading {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <div class="logo">SAM<span>_</span>Items</div>
+      <div class="api-badge">
+        <span class="dot" id="status-dot"></span>
+        <span id="status-text">SIN CONFIGURAR</span>
+      </div>
+    </header>
+
+    <!-- Config -->
+    <div class="config-box">
+      <input
+        type="text"
+        id="api-url"
+        value="https://o739ekbhgi.execute-api.us-east-1.amazonaws.com/Prod/"
+        oninput="updateStatus()"
+      />
+    </div>
+
+    <!-- Actions grid -->
+    <div class="grid">
+
+      <!-- GET ALL -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Obtener todos los items</span>
+          <span class="method-tag get">GET</span>
+        </div>
+        <div class="panel-body">
+          <p style="font-size:0.75rem; color:var(--muted); margin-bottom:1rem;">
+            Recupera todos los items almacenados en DynamoDB.
+          </p>
+          <button class="btn btn-accent" onclick="getAllItems()">▶ Ejecutar</button>
+        </div>
+      </div>
+
+      <!-- GET BY ID -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Buscar item por ID</span>
+          <span class="method-tag get">GET</span>
+        </div>
+        <div class="panel-body">
+          <div class="field">
+            <label>ID del item</label>
+            <input type="text" id="get-id" placeholder="ej: abc-123" />
+          </div>
+          <button class="btn btn-accent" onclick="getById()">▶ Buscar</button>
+        </div>
+      </div>
+
+      <!-- PUT ITEM (spans full if needed) -->
+      <div class="panel" style="grid-column: 1 / -1;">
+        <div class="panel-header">
+          <span class="panel-title">Crear / Actualizar item</span>
+          <span class="method-tag post">PUT</span>
+        </div>
+        <div class="panel-body" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <div class="field">
+              <label>ID del item</label>
+              <input type="text" id="put-id" placeholder="ej: abc-123" />
+            </div>
+            <div class="field">
+              <label>Nombre</label>
+              <input type="text" id="put-name" placeholder="ej: Producto A" />
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <label>Precio</label>
+              <input type="text" id="put-price" placeholder="ej: 29.99" />
+            </div>
+            <div class="field">
+              <label>Descripción</label>
+              <input type="text" id="put-desc" placeholder="ej: Descripción del producto" />
+            </div>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <button class="btn btn-danger" onclick="putItem()">✚ Guardar item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Response -->
+    <div class="response-area">
+      <div class="response-header">
+        <span class="response-title">⟶ Respuesta de la API</span>
+        <span class="status-pill status-idle" id="response-status">IDLE</span>
+      </div>
+      <pre id="response-output">// Aquí aparecerá la respuesta de la API...</pre>
+    </div>
+
+    <footer>IES JUAN DE GARAY · AWS Academy · SAM Serverless CDK · Práctica 3</footer>
+  </div>
+
+  <script>
+    function getApiUrl() {
+      return document.getElementById('api-url').value.replace(/\/$/, '');
+    }
+
+    function updateStatus() {
+      const url = getApiUrl();
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      if (url.startsWith('https://')) {
+        dot.classList.add('ok');
+        text.textContent = 'API CONFIGURADA';
+      } else {
+        dot.classList.remove('ok');
+        text.textContent = 'SIN CONFIGURAR';
+      }
+    }
+
+    function setResponse(data, ok = true) {
+      const pre = document.getElementById('response-output');
+      const pill = document.getElementById('response-status');
+      pre.textContent = JSON.stringify(data, null, 2);
+      pill.textContent = ok ? 'OK 200' : 'ERROR';
+      pill.className = 'status-pill ' + (ok ? 'status-ok' : 'status-err');
+    }
+
+    function setLoading() {
+      document.getElementById('response-output').textContent = '⟳ Cargando...';
+      document.getElementById('response-status').textContent = 'LOADING';
+      document.getElementById('response-status').className = 'status-pill status-idle';
+    }
+
+    async function getAllItems() {
+      const url = getApiUrl();
+      if (!url) return alert('Configura primero la URL de la API');
+      setLoading();
+      try {
+        const res = await fetch(`${url}/items`);
+        const data = await res.json();
+        setResponse(data, res.ok);
+      } catch (e) {
+        setResponse({ error: e.message }, false);
+      }
+    }
+
+    async function getById() {
+      const url = getApiUrl();
+      const id = document.getElementById('get-id').value.trim();
+      if (!url) return alert('Configura primero la URL de la API');
+      if (!id) return alert('Introduce un ID');
+      setLoading();
+      try {
+        const res = await fetch(`${url}/items/${id}`);
+        const data = await res.json();
+        setResponse(data, res.ok);
+      } catch (e) {
+        setResponse({ error: e.message }, false);
+      }
+    }
+
+    async function putItem() {
+      const url = getApiUrl();
+      const id = document.getElementById('put-id').value.trim();
+      const name = document.getElementById('put-name').value.trim();
+      const price = document.getElementById('put-price').value.trim();
+      const desc = document.getElementById('put-desc').value.trim();
+      if (!url) return alert('Configura primero la URL de la API');
+      if (!id) return alert('Introduce un ID');
+      setLoading();
+      try {
+        const res = await fetch(`${url}/items`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, name, price, description: desc })
+        });
+        const data = await res.json();
+        setResponse(data, res.ok);
+      } catch (e) {
+        setResponse({ error: e.message }, false);
+      }
+    }
+  </script>
+</body>
+</html>
